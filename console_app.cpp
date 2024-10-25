@@ -1,7 +1,4 @@
-#include <iostream>
-#include <vector>
-#include <cmath>
-#include <iomanip>
+#include <bits/stdc++.h>
 
 #define EPSILON 0.000001
 
@@ -265,10 +262,150 @@ vector<float> function_call(int power_of_equation, vector<ab_pair> pairab, vecto
     return result;
 }
 
+// Function to perform LU Decomposition
+void luDecomposition(const vector<vector<double>>& mat, int n, vector<vector<double>>& lower, vector<vector<double>>& upper) {
+    for (int i = 0; i < n; i++) {
+        for (int k = i; k < n; k++) {
+            double sum = 0;
+            for (int j = 0; j < i; j++) {
+                sum += lower[i][j] * upper[j][k];
+            }
+            upper[i][k] = mat[i][k] - sum;
+        }
+
+        for (int k = i; k < n; k++) {
+            if (i == k) {
+                lower[i][i] = 1;
+            } else {
+                double sum = 0;
+                for (int j = 0; j < i; j++) {
+                    sum += lower[k][j] * upper[j][i];
+                }
+                lower[k][i] = (mat[k][i] - sum) / upper[i][i];
+            }
+        }
+    }
+}
+
+// Forward substitution to solve L*y = b
+void forwardSubstitution(const vector<vector<double>>& L, vector<double>& y, const vector<double>& b, int n) {
+    for (int i = 0; i < n; i++) {
+        double sum = 0;
+        for (int j = 0; j < i; j++) {
+            sum += L[i][j] * y[j];
+        }
+        y[i] = (b[i] - sum);
+    }
+}
+
+// Backward substitution to solve U*x = y
+void backwardSubstitution(const vector<vector<double>>& U, vector<double>& x, const vector<double>& y, int n) {
+    for (int i = n - 1; i >= 0; i--) {
+        double sum = 0;
+        for (int j = i + 1; j < n; j++) {
+            sum += U[i][j] * x[j];
+        }
+        x[i] = (y[i] - sum) / U[i][i];
+    }
+}
+
+// Function to display a vector
+void displayVector(const vector<double>& vec) {
+    for (double val : vec) {
+        cout << setw(10) << setprecision(5) << val << " ";
+    }
+    cout << endl;
+}
+
+// Function to display a matrix
+void displayMatrix(const vector<vector<double>>& matrix, int n) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cout << setw(10) << setprecision(5) << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+// Function to calculate the inverse of a matrix using LU decomposition
+vector<vector<double>> matrixInverse(const vector<vector<double>>& lower, const vector<vector<double>>& upper, int n) {
+    vector<vector<double>> inverse(n, vector<double>(n));
+
+    for (int i = 0; i < n; i++) {
+        vector<double> b(n, 0);
+        b[i] = 1;  // Setting the i-th element to 1 for the identity matrix
+
+        vector<double> y(n, 0);
+        vector<double> x(n, 0);
+
+        // Solving for each column of the inverse
+        forwardSubstitution(lower, y, b, n);
+        backwardSubstitution(upper, x, y, n);
+
+        // Assign the solution to the corresponding column of the inverse matrix
+        for (int j = 0; j < n; j++) {
+            inverse[j][i] = x[j];
+        }
+    }
+
+    return inverse;
+}
+// Runge-Kutta 4th order method for a linear ODE
+void rungeKuttaLinear(double y0, double t0, double t_end, double h) {
+    double t = t0;
+    double y = y0;
+
+    cout << "t\t y (Linear ODE)" << endl;
+
+    // Linear differential equation: dy/dt = ay + b
+    double a = 1.0; // Coefficient
+    double b = 0.0; // Constant term
+
+    while (t <= t_end) {
+        cout << t << "\t " << y << endl;
+
+        double k1 = h * (a * y + b);
+        double k2 = h * (a * (y + k1 / 2) + b);
+        double k3 = h * (a * (y + k2 / 2) + b);
+        double k4 = h * (a * (y + k3) + b);
+
+        y += (k1 + 2 * k2 + 2 * k3 + k4) / 6; // Update y
+        t += h; // Increment time
+    }
+}
+
+// Runge-Kutta 4th order method for a trigonometric ODE
+void rungeKuttaTrigonometric(double y0, double t0, double t_end, double h) {
+    double t = t0;
+    double y = y0;
+
+    cout << "\nSolving Trigonometric ODE:" << endl;
+    cout << "t\t y (Trigonometric ODE)" << endl;
+
+    // Trigonometric differential equation: dy/dt = sin(t)
+    while (t <= t_end) {
+        cout << t << "\t " << y << endl;
+
+        double k1 = h * sin(t);
+        double k2 = h * sin(t + h / 2);
+        double k3 = h * sin(t + h / 2);
+        double k4 = h * sin(t + h);
+
+        y += (k1 + 2 * k2 + 2 * k3 + k4) / 6; // Update y
+        t += h; // Increment time
+    }
+}
+
 int main()
 
 {
-    // taking no of degree for equation
+    cout<<"1.Nonlinear equation:"<<endl;
+    cout<<"2.LU factorization,Runge kutta,Matrix inversion:"<<endl;
+    cout<<"Enter your choice:";
+    int choice;
+    if(choice==1)
+    {
+        // taking no of degree for equation
     int power_of_equation = 0;
     cin >> power_of_equation;
 
@@ -288,6 +425,109 @@ int main()
 
     // printing result vector by function
     printing_roots(power_of_equation, result);
+    }
+    else if(choice==2)
+    {
+         cout<<"1. LU factorization"<<endl
+                <<"2.Matrix inversion"<<endl
+        <<"3.Runge Kutta Method"<<endl;
 
-    return 0;
+
+          int select;
+            cout<<"Select what type of equation you want to solve:";
+            cin>>select;
+
+            if(select==1)
+            {
+                int n;
+    cout << "Enter the number of variables: ";
+    cin >> n;
+    vector<vector<double>> mat(n, vector<double>(n));
+
+    // Taking user input for the matrix A
+    cout << "Enter the elements of the matrix A:" << endl;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cout << "Element [" << i << "][" << j << "]: ";
+            cin >> mat[i][j];
+        }
+    }
+
+    // Declaring lower and upper matrices
+    vector<vector<double>> lower(n, vector<double>(n, 0));
+    vector<vector<double>> upper(n, vector<double>(n, 0));
+
+    // Performing LU Decomposition
+    luDecomposition(mat, n, lower, upper);
+
+    vector<double> b(n);
+            cout << "Enter the elements of the vector b:" << endl;
+            for (int i = 0; i < n; i++) {
+                cout << "Element [" << i << "]: ";
+                cin >> b[i];
+            }
+
+            vector<double> y(n, 0); // Solution to L*y = b
+            vector<double> x(n, 0); // Solution to U*x = y
+
+            forwardSubstitution(lower, y, b, n);
+            backwardSubstitution(upper, x, y, n);
+
+            cout << "\nSolution vector x:" << endl;
+            displayVector(x);
+
+
+            }
+            else if(select==2)
+            {
+                          int n;
+    cout << "Enter the number of variables: ";
+    cin >> n;
+    vector<vector<double>> mat(n, vector<double>(n));
+
+    // Taking user input for the matrix A
+    cout << "Enter the elements of the matrix A:" << endl;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cout << "Element [" << i << "][" << j << "]: ";
+            cin >> mat[i][j];
+        }
+    }
+
+    // Declaring lower and upper matrices
+    vector<vector<double>> lower(n, vector<double>(n, 0));
+    vector<vector<double>> upper(n, vector<double>(n, 0));
+
+    // Performing LU Decomposition
+    luDecomposition(mat, n, lower, upper);
+                vector<vector<double>> inverse = matrixInverse(lower, upper, n);
+            cout << "\nInverse of Matrix A:" << endl;
+            displayMatrix(inverse, n);
+
+            }
+            else if (select==3)
+            {
+                double y0;      // Initial condition
+    double t0 ;     // Initial time
+    double t_end ;  // End time
+    double h ;      // Step size
+    cout<<"Enter the value of Initial Condition,Initial time,End time,step size"<<endl;
+    cin>>y0>>t0>>t_end>>h;
+
+    int choice;
+        cout<<"1.solve Linear equation:"<<endl
+        <<"2.Tigonometric(sine) equation"<<endl;
+        cout<<"Enter your choice:";
+        cin>>choice;
+
+if(choice==1)rungeKuttaLinear(y0, t0, t_end, h);        // Solve linear ODE
+    else if (choice==2)rungeKuttaTrigonometric(y0, t0, t_end, h); // Solve trigonometric ODE
+else cout<<"No solution choose"<<endl;
+    }
+
+
+}
+else
+    cout<<"No choice selected"<<endl;
+
 }
