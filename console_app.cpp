@@ -4,21 +4,236 @@
 
 using namespace std;
 
-//some demo non linear equations
+void jacobi_iteration(const vector<vector<double>>& a, const vector<double>& b, vector<double>& x_init, int max_iterations, double tolerance)
+{
+    int n = b.size();
+    vector<double> x = x_init;
+    vector<double> x_new(n);
+    vector<double> mae_list;
 
-//  demo equation : 4x²-32x+63=0
-// demo formate   : n(degree) a b c....(co-efficient)
-//  demo input1   : 2 4 -32 63
+    cout << setw(10) << "Iteration" << setw(10) << "xi" << setw(10) << "yi" << setw(10) << "zi"
+         << setw(10) << "x(i+1)" << setw(10) << "y(i+1)" << setw(10) << "z(i+1)"
+         << setw(10) << "ex" << setw(10) << "ey" << setw(10) << "ez"
+         << setw(10) << "mae" << setw(10) << "mse" << setw(10) << "rmse" << endl;
 
-//  demo equation : 8x³-108x²+478x-693=0
-// demo formate   : n(degree) a b c....(co-efficient)
-//  demo input1   : 3 8 -108 478 -693
+    for (int iteration = 0; iteration < max_iterations; iteration++)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            double sum_ax = 0;
+            for (int j = 0; j < n; j++)
+            {
+                if (i != j)
+                {
+                    sum_ax += a[i][j] * x[j];
+                }
+            }
+            x_new[i] = (b[i] - sum_ax) / a[i][i];
+        }
 
-//  demo equation : 16x⁴-320x³+2360x²-7600x+9009=0
-// demo formate   : n(degree) a b c....(co-efficient)
-//  demo input1   : 4 16 -320 2360 -7600 9009
+        double ex = (n > 0) ? abs(x_new[0] - x[0]) : 0;
+        double ey = (n > 1) ? abs(x_new[1] - x[1]) : 0;
+        double ez = (n > 2) ? abs(x_new[2] - x[2]) : 0;
 
-// int no_of_iteration = 0;
+        double mae = (ex + ey + ez) / n;
+        double mse = (ex * ex + ey * ey + ez * ez) / n;
+        double rmse = sqrt(mse);
+
+        cout << setw(10) << iteration + 1 << setw(10) << fixed << setprecision(4) << x[0]
+             << setw(10) << x[1] << setw(10) << x[2]
+             << setw(10) << x_new[0] << setw(10) << x_new[1] << setw(10) << x_new[2]
+             << setw(10) << ex << setw(10) << ey << setw(10) << ez
+             << setw(10) << mae << setw(10) << mse << setw(10) << rmse << endl;
+
+        if (sqrt(pow(x_new[0] - x[0], 2) + pow(x_new[1] - x[1], 2) + pow(x_new[2] - x[2], 2)) < tolerance)
+        {
+            cout << "Converged after " << iteration + 1 << " iterations." << endl;
+            break;
+        }
+
+        x = x_new;
+        mae_list.push_back(mae);
+    }
+}
+
+void gauss_seidel(const vector<vector<double>>& a, const vector<double>& b, int max_iterations, double tolerance)
+{
+    int n = b.size();
+    vector<double> x(n, 0);
+    vector<double> mae_list;
+
+    cout << setw(10) << "Iteration" << setw(10) << "xi" << setw(10) << "yi" << setw(10) << "zi"
+         << setw(10) << "x(i+1)" << setw(10) << "y(i+1)" << setw(10) << "z(i+1)"
+         << setw(10) << "ex" << setw(10) << "ey" << setw(10) << "ez"
+         << setw(10) << "mae" << setw(10) << "mse" << setw(10) << "rmse" << endl;
+
+    for (int iteration = 0; iteration < max_iterations; iteration++)
+    {
+        vector<double> x_new = x;
+
+        for (int i = 0; i < n; i++)
+        {
+            double sum_ax = 0;
+            for (int j = 0; j < n; j++)
+            {
+                if (i != j)
+                {
+                    sum_ax += a[i][j] * x_new[j];
+                }
+            }
+            x_new[i] = (b[i] - sum_ax) / a[i][i];
+        }
+
+        double ex = (n > 0) ? abs(x_new[0] - x[0]) : 0;
+        double ey = (n > 1) ? abs(x_new[1] - x[1]) : 0;
+        double ez = (n > 2) ? abs(x_new[2] - x[2]) : 0;
+
+        double mae = (ex + ey + ez) / n;
+        double mse = (ex * ex + ey * ey + ez * ez) / n;
+        double rmse = sqrt(mse);
+
+        cout << setw(10) << iteration + 1 << setw(10) << fixed << setprecision(4) << x[0]
+             << setw(10) << x[1] << setw(10) << x[2]
+             << setw(10) << x_new[0] << setw(10) << x_new[1] << setw(10) << x_new[2]
+             << setw(10) << ex << setw(10) << ey << setw(10) << ez
+             << setw(10) << mae << setw(10) << mse << setw(10) << rmse << endl;
+
+        if (sqrt(pow(x_new[0] - x[0], 2) + pow(x_new[1] - x[1], 2) + pow(x_new[2] - x[2], 2)) < tolerance)
+        {
+            cout << "Converged after " << iteration + 1 << " iterations." << endl;
+            break;
+        }
+
+        x = x_new;
+        mae_list.push_back(mae);
+    }
+}
+
+void calculate_errors(const vector<double>& true_values, const vector<double>& estimated_values, double &mse, double &mae, double &rmse)
+{
+    double sum_squared_error = 0;
+    double sum_absolute_error = 0;
+    int n = true_values.size();
+
+    for (int i = 0; i < n; ++i)
+    {
+        double error = true_values[i] - estimated_values[i];
+        sum_squared_error += error * error;
+        sum_absolute_error += abs(error);
+    }
+
+    mse = sum_squared_error / n;
+    mae = sum_absolute_error / n;
+    rmse = sqrt(mse);
+}
+
+
+
+void printMatrix(const vector<vector<double>>& matrix)
+{
+    for (const auto& row : matrix)
+    {
+        for (double val : row)
+        {
+            cout << setw(10) << setprecision(4) << val << " ";
+        }
+        cout << endl;
+    }
+    cout<<endl;
+}
+
+void rearrangeRows(vector<vector<double>>& matrix, int col)
+{
+    int n = matrix.size();
+    int flag=0;
+
+    for (int row = 0; row < n; ++row)
+    {
+        if (matrix[row][col] == 0)
+        {
+            for(int l=0; l<col; l++)
+            {
+
+
+                if(matrix[row][l]<0 || matrix[row][l]>0)
+                {
+                    flag=1;
+
+                    break;
+                }
+            }
+
+            if(flag==0)
+            {
+                for (int k = row + 1; k < n; ++k)
+                {
+                    if (matrix[k][col] != 0)
+                    {
+
+                        swap(matrix[row], matrix[k]);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
+
+vector<vector<double>> gaussElimination(vector<vector<double>>& matrix)
+{
+    int n = matrix.size();
+    int m = matrix[0].size();
+
+
+    for (int col = 0; col < n - 1; ++col)
+    {
+
+        rearrangeRows(matrix, col);
+        for (int row = col + 1; row < n; ++row)
+        {
+            if (matrix[row][col] != 0)
+            {
+                double multiplier = matrix[row][col] / matrix[col][col];
+                for (int j = col; j < m; ++j)
+                {
+                    matrix[row][j] -= multiplier * matrix[col][j];
+                }
+            }
+        }
+
+
+    }
+    return matrix;
+}
+
+vector<vector<double>> gaussJordan(vector<vector<double>>& matrix)
+{
+    int n = matrix.size();
+    int m = matrix[0].size();
+
+
+    for (int col = 0; col < n; ++col)
+    {
+
+        rearrangeRows(matrix, col);
+
+
+        for (int row = 0; row < n; ++row)
+        {
+            if (row != col)
+            {
+                double multiplier = matrix[row][col] / matrix[col][col];
+                for (int j = 0; j < m; ++j)
+                {
+                    matrix[row][j] -= multiplier * matrix[col][j];
+                }
+            }
+        }
+
+    }
+
+    return matrix;
+}
 
 struct ab_pair
 {
@@ -395,17 +610,215 @@ void rungeKuttaTrigonometric(double y0, double t0, double t_end, double h) {
         t += h; // Increment time
     }
 }
-
-int main()
-
+void slnoflinear()
 {
-    cout<<"1.Nonlinear equation:"<<endl;
-    cout<<"2.LU factorization,Runge kutta,Matrix inversion:"<<endl;
-    cout<<"Enter your choice:";
-    int choice;
-    if(choice==1)
+    cout<<"1. Jacobi iterative method"<<endl
+        <<"2. Gauss-Seidel iterative method"<<endl
+        <<"3. Gauss elimination"<<endl
+        <<"4. Gausss-Jordan elimination"<<endl
+        <<"5. LU factorization"<<endl;
+
+    int select;
+    cout<<"Select what type of equation you want to solve:";
+    cin>>select;
+
+    if(select==1)
     {
-        // taking no of degree for equation
+        int n;
+        cout << "Enter the number of equations (and variables): ";
+        cin >> n;
+
+        vector<vector<double>> a(n, vector<double>(n));
+        vector<double> b(n);
+
+        cout << "Enter the coefficients of the equations (" << n << "x" << n + 1 << " matrix):" << endl;
+        for (int i = 0; i < n; i++)
+        {
+            cout << "Row " << i + 1 << " (coefficients followed by constant): ";
+            for (int j = 0; j < n; j++)
+            {
+                cin >> a[i][j];
+            }
+            cin >> b[i];
+        }
+
+        int max_iterations;
+        double tolerance;
+        cout << "Enter the maximum number of iterations: ";
+        cin >> max_iterations;
+        cout << "Enter the tolerance for convergence: ";
+        cin >> tolerance;
+
+        vector<double> x_init(n, 0.0);
+
+        jacobi_iteration(a, b, x_init, max_iterations, tolerance);
+
+
+        vector<double> true_values(n, 1.0);
+        vector<double> final_solution_jacobi(n, 0.0);
+
+
+        double mse_jacobi, mae_jacobi, rmse_jacobi;
+        calculate_errors(true_values, final_solution_jacobi, mse_jacobi, mae_jacobi, rmse_jacobi);
+
+
+
+        cout << "Jacobi Method: MSE: " << mse_jacobi << ", MAE: " << mae_jacobi << ", RMSE: " << rmse_jacobi << endl;
+
+
+
+    }
+
+    else if(select==2)
+    {
+        int n;
+        cout << "Enter the number of equations (and variables): ";
+        cin >> n;
+
+        vector<vector<double>> a(n, vector<double>(n));
+        vector<double> b(n);
+
+        cout << "Enter the coefficients of the equations (" << n << "x" << n + 1 << " matrix):" << endl;
+        for (int i = 0; i < n; i++)
+        {
+            cout << "Row " << i + 1 << " (coefficients followed by constant): ";
+            for (int j = 0; j < n; j++)
+            {
+                cin >> a[i][j];
+            }
+            cin >> b[i];
+        }
+
+        int max_iterations;
+        double tolerance;
+        cout << "Enter the maximum number of iterations: ";
+        cin >> max_iterations;
+        cout << "Enter the tolerance for convergence: ";
+        cin >> tolerance;
+
+        vector<double> x_init(n, 0.0);
+        gauss_seidel(a, b, max_iterations, tolerance);
+
+        vector<double> true_values(n, 1.0);
+        vector<double> final_solution_jacobi(n, 0.0);
+        vector<double> final_solution_gs(n, 0.0);
+
+
+        double mse_gs, mae_gs, rmse_gs;
+        calculate_errors(true_values, final_solution_gs, mse_gs, mae_gs, rmse_gs);
+
+
+        cout << "Gauss-Seidel Method: MSE: " << mse_gs << ", MAE: " << mae_gs << ", RMSE: " << rmse_gs << endl;
+    }
+
+    else if(select==3)
+    {
+        int n;
+        cout << "Enter the number of equations (and variables): ";
+        cin >> n;
+        vector<vector<double>> matrix(n,vector<double>(n+1));
+        for(int i=0; i<n; i++)
+        {
+            for(int j=0; j<=n; j++)
+            {
+                cin>>matrix[i][j];
+            }
+        }
+        cout << "Original Matrix:\n";
+        printMatrix(matrix);
+
+        // Perform Gauss Elimination
+        matrix = gaussElimination(matrix);
+        cout << "\nGauss Elimination Matrix\n";
+        printMatrix(matrix);
+
+    }
+    else if(select==4)
+    {
+        int n;
+        cout << "Enter the number of equations (and variables): ";
+        cin >> n;
+        vector<vector<double>> matrix(n,vector<double>(n+1));
+        for(int i=0; i<n; i++)
+        {
+            for(int j=0; j<=n; j++)
+            {
+                cin>>matrix[i][j];
+            }
+        }
+        cout << "Original Matrix:\n";
+        printMatrix(matrix);
+
+        // Perform Gauss Elimination
+        matrix = gaussElimination(matrix);
+
+        matrix = gaussJordan(matrix);
+        cout << "\nGauss Jordan Elimination matrix\n";
+        printMatrix(matrix);
+        cout<<endl;
+
+
+    }
+    else if (select==5)
+    {
+        int n;
+        cout << "Enter the number of variables: ";
+        cin >> n;
+        vector<vector<double>> mat(n, vector<double>(n));
+
+        // Taking user input for the matrix A
+        cout << "Enter the elements of the matrix A:" << endl;
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                cout << "Element [" << i << "][" << j << "]: ";
+                cin >> mat[i][j];
+            }
+        }
+
+        // Declaring lower and upper matrices
+        vector<vector<double>> lower(n, vector<double>(n, 0));
+        vector<vector<double>> upper(n, vector<double>(n, 0));
+
+        // Performing LU Decomposition
+        luDecomposition(mat, n, lower, upper);
+
+        vector<double> b(n);
+        cout << "Enter the elements of the vector b:" << endl;
+        for (int i = 0; i < n; i++)
+        {
+            cout << "Element [" << i << "]: ";
+            cin >> b[i];
+        }
+
+        vector<double> y(n, 0); // Solution to L*y = b
+        vector<double> x(n, 0); // Solution to U*x = y
+
+        forwardSubstitution(lower, y, b, n);
+        backwardSubstitution(upper, x, y, n);
+
+        cout << "\nSolution vector x:" << endl;
+        displayVector(x);
+
+    }
+    else
+        cout<<"NO method selected";
+}
+
+
+
+
+void slnofnonlinear()
+{
+    cout<<"1. Bisection Method"<<endl
+        <<"2.False Position Method"<<endl
+        <<"3.Secant Method"<<endl
+        <<"4.Newton-Raphson Method"<<endl;
+
+    int select;
+
+    cout<<"taking no of degree for equation";
     int power_of_equation = 0;
     cin >> power_of_equation;
 
@@ -415,119 +828,136 @@ int main()
     // declaring pair/range(a,b) vector and initializing it by function
     vector<ab_pair> pairab = make_pairab(power_of_equation, co_efficient_arr);
 
-    // which method(out of 4) to call
-    int method_no = 0;
-    cout << "Method : ";
-    cin >> method_no;
+    cout<<"Select what type of equation you want to solve:";
+    cin>>select;
 
     // declaring result vector and initializing it with calling specific function
-    vector<float> result = function_call(power_of_equation, pairab, co_efficient_arr, method_no);
+    vector<float> result = function_call(power_of_equation, pairab, co_efficient_arr,select);
 
     // printing result vector by function
     printing_roots(power_of_equation, result);
-    }
-    else if(choice==2)
+
+
+
+
+}
+
+
+void  slnofdiff()
+{
+    double y0;
+    double t0;
+    double t_end;
+    double h;
+    cout << "Enter the value of Initial Condition, Initial time, End time, step size" << endl;
+    cin >> y0 >> t0 >> t_end >> h;
+
+    int choice;
+    cout << "1. Solve Linear equation:" << endl
+         << "2. Trigonometric (sine) equation" << endl;
+    cout << "Enter your choice: ";
+    cin >> choice;
+
+    if (choice == 1)
     {
-         cout<<"1. LU factorization"<<endl
-                <<"2.Matrix inversion"<<endl
-        <<"3.Runge Kutta Method"<<endl;
+        rungeKuttaLinear(y0, t0, t_end, h);
+    }
+    else if (choice == 2)
+    {
+        rungeKuttaTrigonometric(y0, t0, t_end, h);
+    }
+    else
+    {
+        cout << "No solution choose" << endl;
+    }
 
 
-          int select;
+}
+
+
+void inversematrix()
+{
+    int n;
+    cout << "Enter the number of variables: ";
+    cin >> n;
+    vector<vector<double>> mat(n, vector<double>(n));
+
+    // Taking user input for the matrix A
+    cout << "Enter the elements of the matrix A:" << endl;
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            cout << "Element [" << i << "][" << j << "]: ";
+            cin >> mat[i][j];
+        }
+    }
+
+    // Declaring lower and upper matrices
+    vector<vector<double>> lower(n, vector<double>(n, 0));
+    vector<vector<double>> upper(n, vector<double>(n, 0));
+
+    // Performing LU Decomposition
+    luDecomposition(mat, n, lower, upper);
+    vector<vector<double>> inverse = matrixInverse(lower, upper, n);
+    cout << "\nInverse of Matrix A:" << endl;
+    displayMatrix(inverse, n);
+
+
+}
+
+int main()
+{
+    char c;
+    while(1)
+    {
+        cout<<"want to solve a equation(y/n):"<<endl;
+
+        cout<<"Enter your choice :";
+        cin>>c;
+        if(c=='y')
+        {
+            cout<<"1. Solution of Linear Equations"<<endl
+                <<"2. Solution of Non-linear Equations"<<endl
+                <<"3. Solution of Differential Equations"<<endl
+                <<"4.Matrix inversion"<<endl;
+            int select;
             cout<<"Select what type of equation you want to solve:";
             cin>>select;
 
             if(select==1)
             {
-                int n;
-    cout << "Enter the number of variables: ";
-    cin >> n;
-    vector<vector<double>> mat(n, vector<double>(n));
-
-    // Taking user input for the matrix A
-    cout << "Enter the elements of the matrix A:" << endl;
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            cout << "Element [" << i << "][" << j << "]: ";
-            cin >> mat[i][j];
-        }
-    }
-
-    // Declaring lower and upper matrices
-    vector<vector<double>> lower(n, vector<double>(n, 0));
-    vector<vector<double>> upper(n, vector<double>(n, 0));
-
-    // Performing LU Decomposition
-    luDecomposition(mat, n, lower, upper);
-
-    vector<double> b(n);
-            cout << "Enter the elements of the vector b:" << endl;
-            for (int i = 0; i < n; i++) {
-                cout << "Element [" << i << "]: ";
-                cin >> b[i];
-            }
-
-            vector<double> y(n, 0); // Solution to L*y = b
-            vector<double> x(n, 0); // Solution to U*x = y
-
-            forwardSubstitution(lower, y, b, n);
-            backwardSubstitution(upper, x, y, n);
-
-            cout << "\nSolution vector x:" << endl;
-            displayVector(x);
-
-
+                slnoflinear();
+                cout<<endl;
             }
             else if(select==2)
             {
-                          int n;
-    cout << "Enter the number of variables: ";
-    cin >> n;
-    vector<vector<double>> mat(n, vector<double>(n));
-
-    // Taking user input for the matrix A
-    cout << "Enter the elements of the matrix A:" << endl;
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            cout << "Element [" << i << "][" << j << "]: ";
-            cin >> mat[i][j];
-        }
-    }
-
-    // Declaring lower and upper matrices
-    vector<vector<double>> lower(n, vector<double>(n, 0));
-    vector<vector<double>> upper(n, vector<double>(n, 0));
-
-    // Performing LU Decomposition
-    luDecomposition(mat, n, lower, upper);
-                vector<vector<double>> inverse = matrixInverse(lower, upper, n);
-            cout << "\nInverse of Matrix A:" << endl;
-            displayMatrix(inverse, n);
+                slnofnonlinear();
+                cout<<endl;
 
             }
-            else if (select==3)
+            else if(select==3)
             {
-                double y0;      // Initial condition
-    double t0 ;     // Initial time
-    double t_end ;  // End time
-    double h ;      // Step size
-    cout<<"Enter the value of Initial Condition,Initial time,End time,step size"<<endl;
-    cin>>y0>>t0>>t_end>>h;
+                slnofdiff();
+                cout<<endl;
+            }
+            else if(select==4)
+            {
+                inversematrix();
+            }
+            else
+                cout<<"Nothing is seleceted"<<endl;
+        }
+        else
+        {
+            cout<<"No equation want to solve"<<endl;
+            break;
+        }
 
-    int choice;
-        cout<<"1.solve Linear equation:"<<endl
-        <<"2.Tigonometric(sine) equation"<<endl;
-        cout<<"Enter your choice:";
-        cin>>choice;
-
-if(choice==1)rungeKuttaLinear(y0, t0, t_end, h);        // Solve linear ODE
-    else if (choice==2)rungeKuttaTrigonometric(y0, t0, t_end, h); // Solve trigonometric ODE
-else cout<<"No solution choose"<<endl;
     }
 
 
-}
-else
-    cout<<"No choice selected"<<endl;
 
+
+    return 0;
 }
