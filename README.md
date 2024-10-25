@@ -191,7 +191,7 @@ where x and y are variables and a, b, c, and d are constants.
 
 There are several numerical methods to find the roots of nonlinear equations. Some of the most common methods include:
 
-### 1. Bisection Method
+### a. Bisection Method
 
 The Bisection Method, also known as the binary chopping or half-interval method, works under the condition that if a function \(f(x)\) is real and continuous within an interval \(a < x < b\) and \(f(a)\) and \(f(b)\) are opposite sign, that is \(f(a) \* f(b) < 0\) then there is at least one real root in the interval between \(a\) and \(b\).
 
