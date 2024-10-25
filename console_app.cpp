@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void jacobi_iteration(const vector<vector<double>>& a, const vector<double>& b, vector<double>& x_init, int max_iterations, double tolerance)
+void jacobi_iteration(const vector<vector<double>> &a, const vector<double> &b, vector<double> &x_init, int max_iterations, double tolerance)
 {
     int n = b.size();
     vector<double> x = x_init;
@@ -56,7 +56,7 @@ void jacobi_iteration(const vector<vector<double>>& a, const vector<double>& b, 
     }
 }
 
-void gauss_seidel(const vector<vector<double>>& a, const vector<double>& b, int max_iterations, double tolerance)
+void gauss_seidel(const vector<vector<double>> &a, const vector<double> &b, int max_iterations, double tolerance)
 {
     int n = b.size();
     vector<double> x(n, 0);
@@ -109,7 +109,7 @@ void gauss_seidel(const vector<vector<double>>& a, const vector<double>& b, int 
     }
 }
 
-void calculate_errors(const vector<double>& true_values, const vector<double>& estimated_values, double &mse, double &mae, double &rmse)
+void calculate_errors(const vector<double> &true_values, const vector<double> &estimated_values, double &mse, double &mae, double &rmse)
 {
     double sum_squared_error = 0;
     double sum_absolute_error = 0;
@@ -127,11 +127,9 @@ void calculate_errors(const vector<double>& true_values, const vector<double>& e
     rmse = sqrt(mse);
 }
 
-
-
-void printMatrix(const vector<vector<double>>& matrix)
+void printMatrix(const vector<vector<double>> &matrix)
 {
-    for (const auto& row : matrix)
+    for (const auto &row : matrix)
     {
         for (double val : row)
         {
@@ -139,31 +137,30 @@ void printMatrix(const vector<vector<double>>& matrix)
         }
         cout << endl;
     }
-    cout<<endl;
+    cout << endl;
 }
 
-void rearrangeRows(vector<vector<double>>& matrix, int col)
+void rearrangeRows(vector<vector<double>> &matrix, int col)
 {
     int n = matrix.size();
-    int flag=0;
+    int flag = 0;
 
     for (int row = 0; row < n; ++row)
     {
         if (matrix[row][col] == 0)
         {
-            for(int l=0; l<col; l++)
+            for (int l = 0; l < col; l++)
             {
 
-
-                if(matrix[row][l]<0 || matrix[row][l]>0)
+                if (matrix[row][l] < 0 || matrix[row][l] > 0)
                 {
-                    flag=1;
+                    flag = 1;
 
                     break;
                 }
             }
 
-            if(flag==0)
+            if (flag == 0)
             {
                 for (int k = row + 1; k < n; ++k)
                 {
@@ -179,11 +176,10 @@ void rearrangeRows(vector<vector<double>>& matrix, int col)
     }
 }
 
-vector<vector<double>> gaussElimination(vector<vector<double>>& matrix)
+vector<vector<double>> gaussElimination(vector<vector<double>> &matrix)
 {
     int n = matrix.size();
     int m = matrix[0].size();
-
 
     for (int col = 0; col < n - 1; ++col)
     {
@@ -200,23 +196,19 @@ vector<vector<double>> gaussElimination(vector<vector<double>>& matrix)
                 }
             }
         }
-
-
     }
     return matrix;
 }
 
-vector<vector<double>> gaussJordan(vector<vector<double>>& matrix)
+vector<vector<double>> gaussJordan(vector<vector<double>> &matrix)
 {
     int n = matrix.size();
     int m = matrix[0].size();
-
 
     for (int col = 0; col < n; ++col)
     {
 
         rearrangeRows(matrix, col);
-
 
         for (int row = 0; row < n; ++row)
         {
@@ -229,7 +221,6 @@ vector<vector<double>> gaussJordan(vector<vector<double>>& matrix)
                 }
             }
         }
-
     }
 
     return matrix;
@@ -244,6 +235,7 @@ struct ab_pair
 vector<float> taking_input_co_efficient_arr(int power_of_equation)
 {
     vector<float> co_efficient_arr(power_of_equation + 1, 0);
+    cout<<"Enter coefficients of equation : ";
     for (int i = 0; i < power_of_equation + 1; i++)
     {
         cin >> co_efficient_arr[i];
@@ -385,7 +377,7 @@ float scant_method(float x, float y, int power_of_equation, vector<float> co_eff
     // Ensuring that f(x) and f(y) are not equal initially
     if (fabs(f_x - f_y) < EPSILON)
     {
-        cout << "Warning: Initial points too close or identical function values." << endl;
+        //cout << "Warning: Initial points too close or identical function values." << endl;
         return x;
     }
 
@@ -478,22 +470,31 @@ vector<float> function_call(int power_of_equation, vector<ab_pair> pairab, vecto
 }
 
 // Function to perform LU Decomposition
-void luDecomposition(const vector<vector<double>>& mat, int n, vector<vector<double>>& lower, vector<vector<double>>& upper) {
-    for (int i = 0; i < n; i++) {
-        for (int k = i; k < n; k++) {
+void luDecomposition(const vector<vector<double>> &mat, int n, vector<vector<double>> &lower, vector<vector<double>> &upper)
+{
+    for (int i = 0; i < n; i++)
+    {
+        for (int k = i; k < n; k++)
+        {
             double sum = 0;
-            for (int j = 0; j < i; j++) {
+            for (int j = 0; j < i; j++)
+            {
                 sum += lower[i][j] * upper[j][k];
             }
             upper[i][k] = mat[i][k] - sum;
         }
 
-        for (int k = i; k < n; k++) {
-            if (i == k) {
+        for (int k = i; k < n; k++)
+        {
+            if (i == k)
+            {
                 lower[i][i] = 1;
-            } else {
+            }
+            else
+            {
                 double sum = 0;
-                for (int j = 0; j < i; j++) {
+                for (int j = 0; j < i; j++)
+                {
                     sum += lower[k][j] * upper[j][i];
                 }
                 lower[k][i] = (mat[k][i] - sum) / upper[i][i];
@@ -503,10 +504,13 @@ void luDecomposition(const vector<vector<double>>& mat, int n, vector<vector<dou
 }
 
 // Forward substitution to solve L*y = b
-void forwardSubstitution(const vector<vector<double>>& L, vector<double>& y, const vector<double>& b, int n) {
-    for (int i = 0; i < n; i++) {
+void forwardSubstitution(const vector<vector<double>> &L, vector<double> &y, const vector<double> &b, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
         double sum = 0;
-        for (int j = 0; j < i; j++) {
+        for (int j = 0; j < i; j++)
+        {
             sum += L[i][j] * y[j];
         }
         y[i] = (b[i] - sum);
@@ -514,10 +518,13 @@ void forwardSubstitution(const vector<vector<double>>& L, vector<double>& y, con
 }
 
 // Backward substitution to solve U*x = y
-void backwardSubstitution(const vector<vector<double>>& U, vector<double>& x, const vector<double>& y, int n) {
-    for (int i = n - 1; i >= 0; i--) {
+void backwardSubstitution(const vector<vector<double>> &U, vector<double> &x, const vector<double> &y, int n)
+{
+    for (int i = n - 1; i >= 0; i--)
+    {
         double sum = 0;
-        for (int j = i + 1; j < n; j++) {
+        for (int j = i + 1; j < n; j++)
+        {
             sum += U[i][j] * x[j];
         }
         x[i] = (y[i] - sum) / U[i][i];
@@ -525,17 +532,22 @@ void backwardSubstitution(const vector<vector<double>>& U, vector<double>& x, co
 }
 
 // Function to display a vector
-void displayVector(const vector<double>& vec) {
-    for (double val : vec) {
+void displayVector(const vector<double> &vec)
+{
+    for (double val : vec)
+    {
         cout << setw(10) << setprecision(5) << val << " ";
     }
     cout << endl;
 }
 
 // Function to display a matrix
-void displayMatrix(const vector<vector<double>>& matrix, int n) {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
+void displayMatrix(const vector<vector<double>> &matrix, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
             cout << setw(10) << setprecision(5) << matrix[i][j] << " ";
         }
         cout << endl;
@@ -543,12 +555,14 @@ void displayMatrix(const vector<vector<double>>& matrix, int n) {
 }
 
 // Function to calculate the inverse of a matrix using LU decomposition
-vector<vector<double>> matrixInverse(const vector<vector<double>>& lower, const vector<vector<double>>& upper, int n) {
+vector<vector<double>> matrixInverse(const vector<vector<double>> &lower, const vector<vector<double>> &upper, int n)
+{
     vector<vector<double>> inverse(n, vector<double>(n));
 
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++)
+    {
         vector<double> b(n, 0);
-        b[i] = 1;  // Setting the i-th element to 1 for the identity matrix
+        b[i] = 1; // Setting the i-th element to 1 for the identity matrix
 
         vector<double> y(n, 0);
         vector<double> x(n, 0);
@@ -558,7 +572,8 @@ vector<vector<double>> matrixInverse(const vector<vector<double>>& lower, const 
         backwardSubstitution(upper, x, y, n);
 
         // Assign the solution to the corresponding column of the inverse matrix
-        for (int j = 0; j < n; j++) {
+        for (int j = 0; j < n; j++)
+        {
             inverse[j][i] = x[j];
         }
     }
@@ -566,7 +581,8 @@ vector<vector<double>> matrixInverse(const vector<vector<double>>& lower, const 
     return inverse;
 }
 // Runge-Kutta 4th order method for a linear ODE
-void rungeKuttaLinear(double y0, double t0, double t_end, double h) {
+void rungeKuttaLinear(double y0, double t0, double t_end, double h)
+{
     double t = t0;
     double y = y0;
 
@@ -576,7 +592,8 @@ void rungeKuttaLinear(double y0, double t0, double t_end, double h) {
     double a = 1.0; // Coefficient
     double b = 0.0; // Constant term
 
-    while (t <= t_end) {
+    while (t <= t_end)
+    {
         cout << t << "\t " << y << endl;
 
         double k1 = h * (a * y + b);
@@ -585,12 +602,13 @@ void rungeKuttaLinear(double y0, double t0, double t_end, double h) {
         double k4 = h * (a * (y + k3) + b);
 
         y += (k1 + 2 * k2 + 2 * k3 + k4) / 6; // Update y
-        t += h; // Increment time
+        t += h;                               // Increment time
     }
 }
 
 // Runge-Kutta 4th order method for a trigonometric ODE
-void rungeKuttaTrigonometric(double y0, double t0, double t_end, double h) {
+void rungeKuttaTrigonometric(double y0, double t0, double t_end, double h)
+{
     double t = t0;
     double y = y0;
 
@@ -598,7 +616,8 @@ void rungeKuttaTrigonometric(double y0, double t0, double t_end, double h) {
     cout << "t\t y (Trigonometric ODE)" << endl;
 
     // Trigonometric differential equation: dy/dt = sin(t)
-    while (t <= t_end) {
+    while (t <= t_end)
+    {
         cout << t << "\t " << y << endl;
 
         double k1 = h * sin(t);
@@ -607,22 +626,23 @@ void rungeKuttaTrigonometric(double y0, double t0, double t_end, double h) {
         double k4 = h * sin(t + h);
 
         y += (k1 + 2 * k2 + 2 * k3 + k4) / 6; // Update y
-        t += h; // Increment time
+        t += h;                               // Increment time
     }
 }
+
 void slnoflinear()
 {
-    cout<<"1. Jacobi iterative method"<<endl
-        <<"2. Gauss-Seidel iterative method"<<endl
-        <<"3. Gauss elimination"<<endl
-        <<"4. Gausss-Jordan elimination"<<endl
-        <<"5. LU factorization"<<endl;
+    cout << "1. Jacobi iterative method" << endl
+         << "2. Gauss-Seidel iterative method" << endl
+         << "3. Gauss elimination" << endl
+         << "4. Gausss-Jordan elimination" << endl
+         << "5. LU factorization" << endl;
 
     int select;
-    cout<<"Select what type of equation you want to solve:";
-    cin>>select;
+    cout << "Select what type of equation you want to solve:";
+    cin >> select;
 
-    if(select==1)
+    if (select == 1)
     {
         int n;
         cout << "Enter the number of equations (and variables): ";
@@ -653,23 +673,16 @@ void slnoflinear()
 
         jacobi_iteration(a, b, x_init, max_iterations, tolerance);
 
-
         vector<double> true_values(n, 1.0);
         vector<double> final_solution_jacobi(n, 0.0);
-
 
         double mse_jacobi, mae_jacobi, rmse_jacobi;
         calculate_errors(true_values, final_solution_jacobi, mse_jacobi, mae_jacobi, rmse_jacobi);
 
-
-
         cout << "Jacobi Method: MSE: " << mse_jacobi << ", MAE: " << mae_jacobi << ", RMSE: " << rmse_jacobi << endl;
-
-
-
     }
 
-    else if(select==2)
+    else if (select == 2)
     {
         int n;
         cout << "Enter the number of equations (and variables): ";
@@ -703,25 +716,23 @@ void slnoflinear()
         vector<double> final_solution_jacobi(n, 0.0);
         vector<double> final_solution_gs(n, 0.0);
 
-
         double mse_gs, mae_gs, rmse_gs;
         calculate_errors(true_values, final_solution_gs, mse_gs, mae_gs, rmse_gs);
-
 
         cout << "Gauss-Seidel Method: MSE: " << mse_gs << ", MAE: " << mae_gs << ", RMSE: " << rmse_gs << endl;
     }
 
-    else if(select==3)
+    else if (select == 3)
     {
         int n;
         cout << "Enter the number of equations (and variables): ";
         cin >> n;
-        vector<vector<double>> matrix(n,vector<double>(n+1));
-        for(int i=0; i<n; i++)
+        vector<vector<double>> matrix(n, vector<double>(n + 1));
+        for (int i = 0; i < n; i++)
         {
-            for(int j=0; j<=n; j++)
+            for (int j = 0; j <= n; j++)
             {
-                cin>>matrix[i][j];
+                cin >> matrix[i][j];
             }
         }
         cout << "Original Matrix:\n";
@@ -731,19 +742,18 @@ void slnoflinear()
         matrix = gaussElimination(matrix);
         cout << "\nGauss Elimination Matrix\n";
         printMatrix(matrix);
-
     }
-    else if(select==4)
+    else if (select == 4)
     {
         int n;
         cout << "Enter the number of equations (and variables): ";
         cin >> n;
-        vector<vector<double>> matrix(n,vector<double>(n+1));
-        for(int i=0; i<n; i++)
+        vector<vector<double>> matrix(n, vector<double>(n + 1));
+        for (int i = 0; i < n; i++)
         {
-            for(int j=0; j<=n; j++)
+            for (int j = 0; j <= n; j++)
             {
-                cin>>matrix[i][j];
+                cin >> matrix[i][j];
             }
         }
         cout << "Original Matrix:\n";
@@ -755,11 +765,9 @@ void slnoflinear()
         matrix = gaussJordan(matrix);
         cout << "\nGauss Jordan Elimination matrix\n";
         printMatrix(matrix);
-        cout<<endl;
-
-
+        cout << endl;
     }
-    else if (select==5)
+    else if (select == 5)
     {
         int n;
         cout << "Enter the number of variables: ";
@@ -800,25 +808,25 @@ void slnoflinear()
 
         cout << "\nSolution vector x:" << endl;
         displayVector(x);
-
     }
     else
-        cout<<"NO method selected";
+        cout << "NO method selected";
 }
-
-
-
 
 void slnofnonlinear()
 {
-    cout<<"1. Bisection Method"<<endl
-        <<"2.False Position Method"<<endl
-        <<"3.Secant Method"<<endl
-        <<"4.Newton-Raphson Method"<<endl;
+    cout << "1.Bisection Method" << endl
+         << "2.False Position Method" << endl
+         << "3.Newton-Raphson Method" << endl
+         << "4.Secant Method" << endl;
 
     int select;
 
-    cout<<"taking no of degree for equation";
+    cout<<"Select a method : ";
+
+    cin>>select;
+
+    cout << "Enter no of degree for equation : ";
     int power_of_equation = 0;
     cin >> power_of_equation;
 
@@ -828,22 +836,16 @@ void slnofnonlinear()
     // declaring pair/range(a,b) vector and initializing it by function
     vector<ab_pair> pairab = make_pairab(power_of_equation, co_efficient_arr);
 
-    cout<<"Select what type of equation you want to solve:";
-    cin>>select;
+
 
     // declaring result vector and initializing it with calling specific function
-    vector<float> result = function_call(power_of_equation, pairab, co_efficient_arr,select);
+    vector<float> result = function_call(power_of_equation, pairab, co_efficient_arr, select);
 
     // printing result vector by function
     printing_roots(power_of_equation, result);
-
-
-
-
 }
 
-
-void  slnofdiff()
+void slnofdiff()
 {
     double y0;
     double t0;
@@ -870,10 +872,7 @@ void  slnofdiff()
     {
         cout << "No solution choose" << endl;
     }
-
-
 }
-
 
 void inversematrix()
 {
@@ -902,62 +901,55 @@ void inversematrix()
     vector<vector<double>> inverse = matrixInverse(lower, upper, n);
     cout << "\nInverse of Matrix A:" << endl;
     displayMatrix(inverse, n);
-
-
 }
 
 int main()
 {
     char c;
-    while(1)
+    while (1)
     {
-        cout<<"want to solve a equation(y/n):"<<endl;
+        cout << "want to solve a equation(y/n):" << endl;
 
-        cout<<"Enter your choice :";
-        cin>>c;
-        if(c=='y')
+        cout << "Enter your choice :";
+        cin >> c;
+        if (c == 'y')
         {
-            cout<<"1. Solution of Linear Equations"<<endl
-                <<"2. Solution of Non-linear Equations"<<endl
-                <<"3. Solution of Differential Equations"<<endl
-                <<"4.Matrix inversion"<<endl;
+            cout << "1. Solution of Linear Equations" << endl
+                 << "2. Solution of Non-linear Equations" << endl
+                 << "3. Solution of Differential Equations" << endl
+                 << "4.Matrix inversion" << endl;
             int select;
-            cout<<"Select what type of equation you want to solve:";
-            cin>>select;
+            cout << "Select what type of equation you want to solve:";
+            cin >> select;
 
-            if(select==1)
+            if (select == 1)
             {
                 slnoflinear();
-                cout<<endl;
+                cout << endl;
             }
-            else if(select==2)
+            else if (select == 2)
             {
                 slnofnonlinear();
-                cout<<endl;
-
+                cout << endl;
             }
-            else if(select==3)
+            else if (select == 3)
             {
                 slnofdiff();
-                cout<<endl;
+                cout << endl;
             }
-            else if(select==4)
+            else if (select == 4)
             {
                 inversematrix();
             }
             else
-                cout<<"Nothing is seleceted"<<endl;
+                cout << "Nothing is seleceted" << endl;
         }
         else
         {
-            cout<<"No equation want to solve"<<endl;
+            cout << "No equation want to solve" << endl;
             break;
         }
-
     }
-
-
-
 
     return 0;
 }
