@@ -1,4 +1,4 @@
-# <span style="font-size: 18px; font-weight: bold;">Numerical Methods Solver</span>
+# <span style="font-size: 18px; font-weight: bold;">Console Application Development Using Numerical Method</span>
 
 ## <span style="font-size: 18px; font-weight: bold;">Table of Contents</span>
 - [Introduction](#introduction)  
@@ -21,6 +21,132 @@
 
 ## <span style="font-size: 18px; font-weight: bold;">Introduction</span>  
 The Numerical Methods Solver is an application designed to provide solutions for various mathematical problems, including linear equations, non-linear equations, differential equations, and matrix inversion. This README file outlines the algorithms used in the application, providing detailed explanations for each method, including their workings, applications, advantages, and disadvantages.  
+
+
+# Algorithms
+
+## 1. Solutions for Linear Equations
+
+### a. Jacobi Iterative Method
+
+The Jacobi method, named after German mathematician Carl Gustav Jacob Jacobi (1804 – 1851), is used for solving a system of linear equations:
+
+
+a_11 * x_1 + a_12 * x_2 + ... + a_1n * x_n = b_1 
+
+a_21 * x_1 + a_22 * x_2 + ... + a_2n * x_n = b_2 
+
+a_n1 * x_1 + a_n2 * x_2 + ... + (a_nn) * x_n=b_n
+
+To find the solution to this system Ax = B, we assume that the system has a unique solution and that there are no zero entries among the diagonal or pivot elements of the coefficient matrix A.
+
+The equations can be rearranged as follows:
+
+
+x_1 = (1/a_11)* (b_1 - a_12 * x_2 - a_13 * x_3 - ... - a_1n * x_n) 
+
+x_2 = (1/a_22) *(b_2 - a_21 * x_1 - a_23 * x_3 - ...  - a_2n * x_n) 
+
+x_n =(1/a_nn) * (b_n - a_n1 * x_1 - a_n2 *x_2 - ... - a_{n(n-1)} * x_{n-1})
+
+
+By making an initial guess for the solution \(x^{(0)} = (x_1^{(0)}, x_2^{(0)}, \ldots, x_n^{(0)})\) and substituting these values into the right-hand side of the above equations, we get the first approximations \(x^{(1)} = (x_1^{(1)}, x_2^{(1)}, \ldots, x_n^{(1)})\). Continuing this process iteratively, we obtain a sequence of approximations \(\{x^{(k)}\}\) that converges to the exact solution of the system up to a given error tolerance as \(k \to \infty\).
+
+**Applications:**
+- Solving large systems of linear equations in fields such as engineering and physics.
+- Particularly useful for sparse matrices.
+
+**Advantages:**
+- Simple to implement and understand.
+- Can be parallelized, making it efficient for large systems.
+
+**Disadvantages:**
+- Convergence can be slow, especially for poorly conditioned matrices.
+- May not converge for some types of matrices unless they are diagonally dominant.
+
+
+
+### b. Gauss-Seidel Iterative Method
+
+In the Gauss-Seidel method, the value of the variables is modified as soon as a new value is evaluated. For instance, in the Jacobi method, the value of \(x_i^{(k)}\) is not modified until the \((k + 1)\)th iteration, whereas in the Gauss-Seidel method, the value of \(x_i^{(k)}\) changes in the \(k\)th iteration.
+
+**Applications:**
+- Often used in engineering applications where large systems arise.
+- Effective for systems modeled by finite difference equations.
+
+**Advantages:**
+- Typically converges faster than the Jacobi method.
+- Efficient for large, sparse matrices.
+
+**Disadvantages:**
+- Convergence is not guaranteed for all types of matrices.
+- Requires initial values to be reasonably close to the solution for better convergence.
+
+
+
+### c. Gauss Elimination
+
+**Form the Augmented Matrix:**
+- Combine the coefficient matrix \(A\) and the constant vector \(b\) into an augmented matrix \([A | b]\).
+
+**Forward Elimination:**
+- Convert the augmented matrix into an upper triangular form using elementary row operations. This involves:
+  - Selecting a pivot element (the first non-zero element in the current column).
+  - Performing row operations to eliminate all entries below the pivot in that column.
+  - Repeating for each column, moving down the rows.
+
+**Row Operations:**
+- Swap two rows.
+- Multiply a row by a non-zero scalar.
+- Add or subtract a multiple of one row to another row.
+
+**Back Substitution:**
+- Once the matrix is in upper triangular form, start from the last row and solve for the unknowns:
+  - For the last row, you can directly solve for the corresponding variable.
+  - Substitute back into the previous rows to find the remaining variables step by step.
+
+**Applications:**
+- Used extensively in engineering, physics, and computer science for solving systems of linear equations.
+- Also applicable in operations research and numerical simulations.
+
+**Advantages:**
+- **Exact Solutions:** Provides a direct method to obtain exact solutions for systems of linear equations.
+- **Wide Applicability:** Can be used for any size of linear systems.
+- **Structured Approach:** Systematic method that is easy to follow and implement.
+
+**Disadvantages:**
+- **Computationally Intensive:** Requires \(O(n^3)\) operations for an \(n \times n\) system, making it inefficient for very large systems.
+- **Numerical Stability:** Can lead to numerical instability and rounding errors, particularly for ill-conditioned matrices.
+- **Requires Full Rank:** The method requires that the system has a unique solution (i.e., the matrix must be of full rank).
+
+
+
+### d. Gauss-Jordan Elimination
+
+**Form the Augmented Matrix:**
+- Start with the augmented matrix \([A | b]\) that combines the coefficient matrix \(A\) and the constant vector \(b\).
+
+**Forward Elimination to Row Echelon Form:**
+- Convert the matrix to row echelon form (upper triangular form) using elementary row operations:
+  - Select a pivot element in each column.
+  - Eliminate all entries below the pivot by performing appropriate row operations.
+
+**Back Elimination to Reduced Row Echelon Form:**
+- Continue applying row operations to eliminate all entries above each pivot, transforming the matrix into reduced row echelon form (RREF):
+  - The pivot elements in each column should be 1.
+  - Each pivot column should have zeros in all other entries.
+
+**Extract Solutions:**
+- Once in RREF, read the solutions directly from the matrix. If the system has a unique solution, the matrix will have a pivot in every column corresponding to a variable.
+
+**Applications:**
+- Widely used in linear algebra for solving systems of linear equations.
+- Applicable for finding the inverse of a matrix (if it exists).
+
+**Advantages:**
+- **Direct Solutions:** Provides a straightforward method to obtain the solutions of linear systems.
+- **Unique and Consistent Solutions:** The RREF form indicates whether the system has a unique solution or is inconsistent.
+
 
 #### <span style="font-size: 12px; font-weight: bold;">e. LU Factorization</span>  
 **Overview:** LU factorization decomposes a square matrix A into a product of a lower triangular matrix L and an upper triangular matrix U.  
