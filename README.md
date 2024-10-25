@@ -11,9 +11,10 @@
     - [e. LU Factorization](#e-lu-factorization)  
   - [2. Solutions for Non-linear Equations](#2-solutions-for-non-linear-equations)  
     - [a. Bisection Method](#a-bisection-method)  
-    - [b. False Position Method](#b-false-position-method)  
-    - [c. Secant Method](#c-secant-method)  
-    - [d. Newton-Raphson Method](#d-newton-raphson-method)  
+    - [b. False Position Method](#b-false-position-method)
+    - [c. Newton-Raphson Method](#c-newton-raphson-method) 
+    - [d. Secant Method](#d-secant-method)  
+     
   - [3. Solutions for Differential Equations](#3-solutions-for-differential-equations)  
     - [a. Runge-Kutta Method](#a-runge-kutta-method)  
   - [4. Matrix Inversion](#4-matrix-inversion)  
@@ -205,7 +206,7 @@ The Bisection Method, also known as the binary chopping or half-interval method,
 5. If \(f(X_0) \* f(b) < 0\), replace \(a\) with \(x_0\) (narrowing the interval to \([X_0, b]\)).
 6. Repeat this process until all roots are found. After finding the first root using step 1, calculate a new interval to find the remaining roots.
 
-### 2. False Position Method
+### b. False Position Method
 
 The False Position Method improves upon the Bisection Method by introducing a more efficient formula to find the root. Instead of using the midpoint, it calculates an improved estimate using the function values at the interval endpoints. Here \(a\) and \(b\) is calculated as same way as bisection for every root.
 
@@ -233,7 +234,7 @@ Steps:
 2. Compute the next approximation using the formula.
 3. Repeat until the function value \(f(X_i)\) is sufficiently close to zero.
 
-### 4. Secant Method
+### d. Secant Method
 
 The Secant Method is similar to the Newton-Raphson method but does not require the computation of the derivative. Instead, it approximates the derivative by using two previous points. The formula is:
 
