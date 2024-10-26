@@ -1,0 +1,45 @@
+1.sample input for linear equation:
+
+27x + 6y - z = 85
+6x + 15y + 2z = 72
+1x + 1y + 54z = 110
+
+3
+27 6 -1 85
+6 15 2 72
+1 1 54 110
+
+answer 
+x=2.42
+y=3.57
+z=1.92
+
+
+2.sample input for non linear equation:
+
+
+16x⁴-320x³+2360x²-7600x+9009=0
+format (degree) a b c....(co-efficient)
+demo input: 4 16 -320 2360 -7600 9009
+
+answer :
+ 
+x1=3.5 
+x2=4.5
+x3=5.5
+
+3.sample input Differential Equations:
+1 0 1 0.1
+
+4.sample input matrix inversion:
+
+1 2 3
+0 1 4
+5 6 0
+
+answer:
+
+-24 18 5
+20 -15 -4
+-5 4 1
+
