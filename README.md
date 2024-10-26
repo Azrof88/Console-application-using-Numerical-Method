@@ -262,13 +262,13 @@ Each method has its strengths and is suited for different types of equations and
 #### <span style="font-size: 12px; font-weight: bold;">a. Runge-Kutta Method</span>  
 1. **Define Initial Conditions:** Start with the initial condition y(x0) = y0 and step size h.  
 2. **Calculate the Four Slopes:** For each step xn, calculate the following slopes:  
-   - k1 
-   - k2  
-   - k3  
-   - k4  
+   - k1=h*f(x(n),y(n))
+   - k2=h*f(x(n)+(h/2),y(n)+(k1/2)) 
+   - k3=h*f(x(n)+(h/2),y(n)+(k2/2))  
+   - k4=h*f(x(n)+h,y(n)+k3)  
 
 3. **Update Solution Estimate:** Use these slopes to estimate the next value:  
-   - y(n+1) = yn + (1/6)*(k1 + 2*k2 + 2*k3 + k4)  
+   - y(n+1) = y(n) + (1/6)*(k1 + 2*k2 + 2*k3 + k4)  
 
 4. **Repeat for Each Interval:** Move to the next interval by setting x*n+1 = x*n + h and repeat the process.  
 
